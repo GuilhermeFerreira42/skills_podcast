@@ -1,134 +1,68 @@
 {
   "formato": "roteiro_podcast",
-  "versao": "1.0",
-  "descricao": "Formato padrao de saida do agente escritor. Entrada padrao para o agente produtor de audio.",
-  "contrato": "O escritor SEMPRE gera neste formato. O produtor de audio SEMPRE le neste formato.",
+  "versao": "2.0",
+  "descricao": "Formato padrao de saida do orquestrador. Entrada para o produtor de audio.",
 
-  "estrutura_raiz": {
-    "metadados": {
-      "tipo": "objecto",
-      "obrigatorio": true,
-      "campos": {
-        "titulo_projeto": {"tipo": "string", "descricao": "Titulo do podcast"},
-        "genero": {"tipo": "string", "descricao": "Genero adotado"},
-        "data_geracao": {"tipo": "string", "descricao": "ISO 8601"},
-        "versao_formato": {"tipo": "string", "valor_fixo": "1.0"},
-        "total_episodios": {"tipo": "int"},
-        "total_segmentos": {"tipo": "int"},
-        "total_falas": {"tipo": "int"}
-      }
-    },
-    "speakers": {
-      "tipo": "array",
-      "obrigatorio": true,
-      "descricao": "Lista de speakers usados no podcast. Min 1, max 4.",
-      "item": {
-        "id": {"tipo": "string", "exemplo": "Speaker A"},
-        "nome_alternativo": {"tipo": "string", "opcional": true, "exemplo": "Dr. Carlos"},
-        "papel": {"tipo": "string", "exemplo": "especialista"},
-        "descricao": {"tipo": "string", "exemplo": "Conduz o conteudo tecnico"},
-        "voz_sugerida": {"tipo": "string", "opcional": true, "exemplo": "pt-BR-AntonioNeural"},
-        "genero": {"tipo": "string", "opcional": true, "exemplo": "masculino"}
-      }
-    },
-    "episodios": {
-      "tipo": "array",
-      "obrigatorio": true,
-      "descricao": "Lista de episodios. Cada episodio contem segmentos, cada segmento contem falas.",
-      "item": {
-        "numero": {"tipo": "int", "exemplo": 1},
-        "titulo": {"tipo": "string", "exemplo": "A agua que voce chama de limpa"},
-        "duracao_estimada_minutos": {"tipo": "int", "opcional": true},
-        "segmentos": {
-          "tipo": "array",
-          "item": {
-            "nome": {"tipo": "string", "exemplo": "Abertura"},
-            "funcao": {"tipo": "string", "exemplo": "abertura", "opcoes": ["abertura", "historia", "conceito", "mecanismo", "implicacao", "protocolo", "fecho"]},
-            "tamanho": {"tipo": "string", "opcoes": ["curto", "medio", "longo"]},
-            "falas": {
-              "tipo": "array",
-              "item": {
-                "speaker_id": {"tipo": "string", "exemplo": "Speaker A"},
-                "texto": {"tipo": "string", "exemplo": "Conteudo da fala em texto plano."}
-              }
+  "metadados": {
+    "tipo": "objeto",
+    "campos": {
+      "titulo_projeto": {"tipo": "string"},
+      "genero": {"tipo": "string"},
+      "data_geracao": {"tipo": "string"},
+      "versao_formato": {"tipo": "string", "valor_fixo": "2.0"},
+      "total_episodios": {"tipo": "int"},
+      "total_falas": {"tipo": "int"},
+      "total_disfluencias": {"tipo": "int", "descricao": "Quantas pausas/interjeicoes foram inseridas para naturalidade"}
+    }
+  },
+
+  "speakers": {
+    "tipo": "array",
+    "min": 1,
+    "max": 4,
+    "item": {
+      "id": {"tipo": "string"},
+      "papel": {"tipo": "string"},
+      "descricao": {"tipo": "string"},
+      "voz_sugerida": {"tipo": "string", "opcional": true},
+      "genero": {"tipo": "string", "opcional": true}
+    }
+  },
+
+  "episodios": {
+    "tipo": "array",
+    "item": {
+      "numero": {"tipo": "int"},
+      "titulo": {"tipo": "string"},
+      "segmentos": {
+        "tipo": "array",
+        "item": {
+          "nome": {"tipo": "string"},
+          "funcao": {"tipo": "string", "opcoes": ["abertura", "historia", "conceito", "mecanismo", "implicacao", "protocolo", "fecho"]},
+          "tamanho": {"tipo": "string", "opcoes": ["curto", "medio", "longo"]},
+          "falas": {
+            "tipo": "array",
+            "min_items": 3,
+            "max_items": 8,
+            "item": {
+              "speaker_id": {"tipo": "string"},
+              "texto": {"tipo": "string", "descricao": "Texto plano, sem markdown. Pode conter disfluencias como 'Ah, entendi', 'Pera ai'"},
+              "disfluencia": {"tipo": "boolean", "opcional": true, "descricao": "Se true, esta fala e uma pausa/interjeicao para naturalidade"}
             }
           }
         }
       }
-    },
-    "abertura_padrao": {
-      "tipo": "objeto",
-      "opcional": true,
-      "descricao": "Abertura que se repete em todo episodio",
-      "campos": {
-        "texto": {"tipo": "string", "descricao": "Texto de abertura"},
-        "speaker_id": {"tipo": "string"}
-      }
-    },
-    "encerramento_padrao": {
-      "tipo": "objeto",
-      "opcional": true,
-      "descricao": "Encerramento padrao",
-      "campos": {
-        "texto": {"tipo": "string"},
-        "speaker_id": {"tipo": "string"}
-      }
-    },
-    "referencias": {
-      "tipo": "array",
-      "opcional": true,
-      "descricao": "Referencias bibliograficas usadas no podcast",
-      "item": {
-        "citacao": {"tipo": "string"},
-        "fonte": {"tipo": "string"},
-        "episodio": {"tipo": "int"}
-      }
     }
   },
 
-  "exemplo_completo": {
-    "metadados": {
-      "titulo_projeto": "O Homem Sabotado",
-      "genero": "podcast narrativo-educacional",
-      "data_geracao": "2026-07-20T12:00:00-03:00",
-      "versao_formato": "1.0",
-      "total_episodios": 31,
-      "total_segmentos": 186,
-      "total_falas": 997
-    },
-    "speakers": [
-      {"id": "Speaker A", "papel": "especialista", "descricao": "Conduz o conteudo tecnico", "voz_sugerida": "pt-BR-AntonioNeural"},
-      {"id": "Speaker B", "papel": "curioso", "descricao": "Representa o ouvinte, faz perguntas", "voz_sugerida": "pt-BR-FranciscaNeural"}
-    ],
-    "episodios": [
-      {
-        "numero": 1,
-        "titulo": "A agua que voce chama de limpa",
-        "segmentos": [
-          {
-            "nome": "Abertura",
-            "funcao": "abertura",
-            "tamanho": "curto",
-            "falas": [
-              {"speaker_id": "Speaker A", "texto": "A agua que sai da sua torneira parece limpa. Mas parece nao e."},
-              {"speaker_id": "Speaker B", "texto": "Entao o que tem nela que eu nao estou vendo?"}
-            ]
-          }
-        ]
-      }
-    ]
-  },
-
-  "regras_para_o_escritor": [
-    "GERAR SEMPRE neste formato JSON. Nunca markdown solto.",
-    "Cada episodio DEVE ter ao menos 3 segmentos.",
-    "Cada segmento DEVE ter ao menos 1 fala.",
-    "Todo speaker usado nas falas DEVE estar listado em speakers[].",
-    "Texto das falas DEVE ser texto plano, sem markdown, sem negritos, sem italicos.",
-    "Nao usar caracteres especiais que possam quebrar JSON.",
-    "Preservar pontuacao normal do portugues.",
-    "Nao incluir indicacoes de cena como [TRILHA SOBE] dentro das falas.",
-    "Segmentos devem ser escritos para audio, nao para leitura silenciosa.",
-    "Apos gerar, validar que o JSON e valido."
-  ]
+  "estado_da_obra": {
+    "tipo": "objeto",
+    "descricao": "Snapshot do estado de producao. Usado para retomada.",
+    "campos": {
+      "ultimo_episodio_concluido": {"tipo": "int"},
+      "ultimo_segmento_concluido": {"tipo": "string"},
+      "total_chamadas_gastas": {"tipo": "int"},
+      "status_geral": {"tipo": "string", "opcoes": ["em_andamento", "concluido", "interrompido"]}
+    }
+  }
 }
