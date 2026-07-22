@@ -1,0 +1,90 @@
+{
+  "formato": "roteiro_podcast",
+  "versao": "3.0",
+  "descricao": "Formato padrao de saida. Suporta 4 formatos de podcast, foco do usuario e sem limite artificial de falas.",
+
+  "metadados": {
+    "tipo": "objeto",
+    "campos": {
+      "titulo_projeto": {"tipo": "string"},
+      "formato": {"tipo": "string", "opcoes": ["detalhado", "resumo", "critica", "debate", "personalizado"]},
+      "foco_do_usuario": {"tipo": "string", "descricao": "Instrucao do usuario sobre o que o podcast deve focar"},
+      "genero": {"tipo": "string"},
+      "data_geracao": {"tipo": "string"},
+      "versao_formato": {"tipo": "string", "valor_fixo": "3.0"},
+      "total_episodios": {"tipo": "int"},
+      "total_falas": {"tipo": "int"},
+      "total_disfluencias": {"tipo": "int", "descricao": "Quantas pausas/interjeicoes foram inseridas para naturalidade"}
+    }
+  },
+
+  "speakers": {
+    "tipo": "array",
+    "min": 1,
+    "max": 4,
+    "item": {
+      "id": {"tipo": "string"},
+      "papel": {"tipo": "string"},
+      "descricao": {"tipo": "string"},
+      "voz_sugerida": {"tipo": "string", "opcional": true},
+      "genero": {"tipo": "string", "opcional": true}
+    }
+  },
+
+  "episodios": {
+    "tipo": "array",
+    "item": {
+      "numero": {"tipo": "int"},
+      "titulo": {"tipo": "string"},
+      "segmentos": {
+        "tipo": "array",
+        "item": {
+          "nome": {"tipo": "string"},
+          "funcao": {"tipo": "string", "opcoes": ["abertura", "historia", "conceito", "mecanismo", "implicacao", "protocolo", "fecho"]},
+          "tamanho": {"tipo": "string", "opcoes": ["curto", "medio", "longo"]},
+          "falas": {
+            "tipo": "array",
+            "min_items": 2,
+            "item": {
+              "speaker_id": {"tipo": "string"},
+              "texto": {"tipo": "string", "descricao": "Texto plano. Pode conter disfluencias como 'Ah, entendi', 'Pera ai'"},
+              "disfluencia": {"tipo": "boolean", "opcional": true, "descricao": "Se true, esta fala e pausa/interjeicao para naturalidade"}
+            }
+          },
+          "estatisticas": {
+            "tipo": "objeto",
+            "descricao": "Metricas de balanceamento do segmento",
+            "opcional": true,
+            "campos": {
+              "total_falas": {"tipo": "int"},
+              "percentual_speaker_a": {"tipo": "float"},
+              "percentual_speaker_b": {"tipo": "float"},
+              "diferenca_maxima_permitida": {"tipo": "float", "valor_fixo": 20.0, "descricao": "Diferenca maxima de 20% entre speakers. Se ultrapassar, segmento e reprovado."}
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "foco_do_usuario": {
+    "tipo": "objeto",
+    "opcional": true,
+    "descricao": "Campo de direcionamento do usuario, similar ao NotebookLM",
+    "campos": {
+      "habilitado": {"tipo": "boolean"},
+      "texto": {"tipo": "string", "descricao": "Texto do usuario dizendo no que focar"}
+    }
+  },
+
+  "estado_da_obra": {
+    "tipo": "objeto",
+    "descricao": "Snapshot do estado de producao. Usado para retomada.",
+    "campos": {
+      "ultimo_episodio_concluido": {"tipo": "int"},
+      "ultimo_segmento_concluido": {"tipo": "int"},
+      "total_chamadas_gastas": {"tipo": "int"},
+      "status_geral": {"tipo": "string", "opcoes": ["em_andamento", "concluido", "interrompido"]}
+    }
+  }
+}

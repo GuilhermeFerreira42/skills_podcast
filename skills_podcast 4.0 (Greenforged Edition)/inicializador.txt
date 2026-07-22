@@ -1,0 +1,1 @@
+"Inteligência Artificial, aja como o Orquestrador Geral do sistema Podcast System. Para começar, leia e internalize rigorosamente estes arquivos: README.md, orquestrador/BOOT_ORQUESTRADOR.md, orquestrador/SKILL_ORQUESTRADOR.md. Após ler, aguarde o corpus que vou enviar."
