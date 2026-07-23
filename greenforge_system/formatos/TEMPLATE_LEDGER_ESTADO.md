@@ -5,6 +5,7 @@
 **Ultima atualizacao:** {{DATA_HORA}}
 **Status geral:** {{EM_ANDAMENTO | CONCLUIDO | INTERROMPIDO}}
 **Chamadas gastas ate agora:** {{NUMERO}}
+**Ultimo backup:** {{ARQUIVO}}.bak (gerado automaticamente antes de cada modificacao)
 
 ---
 
@@ -19,36 +20,41 @@ Se a coluna estiver vazia ou com valor diferente, o ledger esta INVALIDO.
 
 ## Progresso por UAT
 
-| UAT | Descricao | Status | Verificacao | Taxa | Dominio | Ultima acao |
-|-----|-----------|--------|-------------|------|---------|-------------|
-| 001 | Criar funcao X | CONCLUIDO | APROVADO | 95% | codigo | Validado |
-| 002 | Escrever testes | ESCREVENDO | PENDENTE | - | codigo | Solver ativo |
-| 003 | Documentar API | PENDENTE | - | - | texto | Aguardando |
+| UAT | Descricao | Dominio | Status | Retries | Verificacao | Taxa | Chamadas | Checksum Saida | Bytes | Ultima acao |
+|-----|-----------|---------|--------|---------|-------------|------|----------|----------------|-------|-------------|
+| 001 | Criar funcao X | codigo | CONCLUIDO | 0 | APROVADO | 95% | 5 | a3f2b9 | 2048 | Validado |
+| 002 | Escrever testes | codigo | ESCREVENDO | 1 | PENDENTE | - | 3 | - | - | Solver ativo |
+| 003 | Documentar API | texto | PENDENTE | 0 | - | - | 0 | - | - | Aguardando |
 
-**Legenda:** PEND=Pendente, ESCR=Escrevendo, REV=Em revisao, CONCL=Concluido, REPR=Reprovado
+**Legenda:** PEND=Pendente, ESCR=Escrevendo, REV=Em revisao, CONCL=Concluido, REPR=Reprovado, INCONSIST=Inconsistente
 
 ---
 
 ## Worktrees Ativos
 
-| UAT | Worktree | Status |
-|-----|----------|--------|
-| 001 | worktree_uat_001/ | CONCLUIDO |
-| 002 | worktree_uat_002/ | ATIVO |
+| UAT | Worktree | Status | Fronteira OK? | Cegueira OK? |
+|-----|----------|--------|---------------|--------------|
+| 001 | worktree_uat_001/ | CONCLUIDO | PASSOU | PASSOU |
+| 002 | worktree_uat_002/ | ATIVO | - | - |
 
 ---
 
 ## Pendencias e Bloqueios
 
 - UAT 003: aguardando UAT 001 ser concluida (dependencia)
-- Limite de chamadas: 45/50 usadas
+- UAT 002: em reescrita (retry 1 de 3)
 
 ---
 
-## Regras
+## Regras (Greenforged Edition)
 
 1. SEMPRE ler este arquivo antes de comecar.
-2. SEMPRE atualizar apos cada acao.
-3. Verificacao MARCH e OBRIGATORIA. Sem `_resultado_validacao.json` aprovado, a UAT nao existe.
-4. Tolerancia zero para assercoes contraditas.
-5. Se o limite de chamadas for atingido, marcar INTERROMPIDO e salvar ultima UAT exata.
+2. SEMPRE fazer backup (.bak) antes de modificar.
+3. SEMPRE registrar checksum e bytes dos artefatos de saida.
+4. Verificacao MARCH e OBRIGATORIA. Sem `_resultado_validacao.json` aprovado, a UAT nao existe.
+5. Tolerancia zero para assercoes contraditas.
+6. Maximo 3 retries por UAT. Depois disso, REPROVADO.
+7. Toda UAT deve passar pela verificacao de fronteira do worktree.
+8. Toda UAT deve ter auditoria de cegueira do Checker.
+9. Se o limite de chamadas for atingido, marcar INTERROMPIDO e salvar ultima UAT exata.
+10. O orquestrador recalcula agregados manualmente. Nao confia nos campos do Checker.
